@@ -88,206 +88,233 @@
       background: #e04867;
     }
 
-    .emoji {
-      font-size: 4rem;
-      margin: 20px 0;
-    }
-
     #no-btn {
       position: absolute;
       background: #888;
-      padding: 10px 20px;
-      font-size: 1rem;
     }
 
     .game-board {
       width: 100%;
       height: 400px;
-      background: #f5f5f5;
+      background: #ffe4e9;
       border-radius: 15px;
       position: relative;
       overflow: hidden;
-      border: 2px solid #ddd;
+      margin: 10px 0;
     }
 
     .heart {
       position: absolute;
-      color: #ff5e7e;
       font-size: 2rem;
-      cursor: grab;
+      cursor: pointer;
     }
 
-    .heart:active {
-      cursor: grabbing;
+    .basket {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 3rem;
+      cursor: pointer;
     }
 
-    .score {
-      font-size: 1.5rem;
-      color: #ff5e7e;
-      font-weight: bold;
-      margin: 10px 0;
-    }
-
-    .confession {
-      background: #fff9e6;
-      padding: 20px;
-      border-radius: 15px;
-      border-left: 5px solid #ffd700;
+    .emoji-display {
+      font-size: 4rem;
       margin: 20px 0;
-      font-style: italic;
-      color: #666;
     }
 
-    .button-group {
+    .btn-group {
       display: flex;
       gap: 10px;
       justify-content: center;
-      flex-wrap: wrap;
+      width: 100%;
     }
 
-    .btn-sm {
-      padding: 8px 16px;
-      font-size: 0.9rem;
+    .btn-group .btn {
+      margin: 0;
+      flex: 1;
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      position: absolute;
+      bottom: 15px;
+      width: 100%;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ddd;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .dot.active {
+      background: #ff5e7e;
+      transform: scale(1.3);
     }
   </style>
 </head>
 <body>
   <div class="card-container">
-    <!-- Slide 1: Intro -->
     <div class="slide active">
-      <div>
-        <h1>I'm Sorry, Maitri! 🥺</h1>
-        <div class="emoji">😔</div>
-        <p>I made a mistake and I really want to make it up to you...</p>
-        <p style="font-size: 0.9rem; color: #999; margin-top: 10px;">Let me prove it! 💕</p>
+      <div class="emoji-display">😔</div>
+      <h1>I'm So Sorry, Maitri! 🥺</h1>
+      <p>I know I messed up and you deserve an apology. I hope this little card can make you smile and show how much I care about our friendship.</p>
+      <button class="btn" onclick="nextSlide()">Let's Play →</button>
+    </div>
+
+    <div class="slide">
+      <div class="emoji-display">😂</div>
+      <h1>Can You Hit "Yes"?</h1>
+      <p>Try to click the "Yes" button. The "No" button will run away from you!</p>
+      <div style="margin: 30px 0;">
+        <button class="btn" onclick="nextSlide(); resetGame()">Yes, I Forgive You! 💚</button>
+        <button id="no-btn" class="btn" onmouseover="dodgeButton()" onclick="dodgeButton()">No</button>
       </div>
+      <button class="btn" style="margin-top: 20px;" onclick="nextSlide()">Skip Game →</button>
+    </div>
+
+    <div class="slide">
+      <h1>Catch My Hearts! 💗</h1>
+      <p>Click the hearts before they disappear! Catch 5 to win!</p>
+      <div class="game-board" id="gameBoard"></div>
+      <div id="heartCount">Hearts Caught: 0/5</div>
+      <button class="btn" onclick="nextSlide(); resetHeartGame()">Next →</button>
+    </div>
+
+    <div class="slide">
+      <div class="emoji-display">💌</div>
+      <h1>A Letter for You</h1>
+      <p>"I value our friendship more than anything. You mean the world to me, and I promise to be better. Thank you for always being there. You're the best! 💖"</p>
       <button class="btn" onclick="nextSlide()">Continue →</button>
     </div>
 
-    <!-- Slide 2: Confession -->
     <div class="slide">
-      <h1>What Happened?</h1>
-      <div class="confession">
-        "I realized I was wrong. I should have listened to you. You were right all along, and I apologize for not seeing it earlier. Thank you for being patient with me. 💙"
-      </div>
-      <div class="button-group">
-        <button class="btn btn-sm" onclick="prevSlide()">← Back</button>
-        <button class="btn btn-sm" onclick="nextSlide()">Next →</button>
+      <div class="emoji-display">🎉</div>
+      <h1>Will You Accept My Apology?</h1>
+      <p>Let's start fresh and make even better memories together!</p>
+      <div class="btn-group">
+        <button class="btn" onclick="celebrate()">YES! 🎊</button>
+        <button class="btn" onclick="alert('Maitri, please! 😭')">Hmm...</button>
       </div>
     </div>
 
-    <!-- Slide 3: Dodge Game -->
-    <div class="slide">
-      <h1>Game 1: Catch Me If You Can!</h1>
-      <p>Click the "No" button... if you can! 😄</p>
-      <div style="position: relative; width: 100%; height: 250px;">
-        <button class="btn" id="yes-btn" onclick="nextSlide()" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">Yes! 💚</button>
-        <button class="btn" id="no-btn" onmouseenter="moveButton()">No</button>
-      </div>
-      <button class="btn" onclick="prevSlide()" style="margin-top: 20px;">← Back</button>
-    </div>
-
-    <!-- Slide 4: Heart Game -->
-    <div class="slide">
-      <h1>Game 2: Catch My Hearts!</h1>
-      <p>Click the hearts to show you care! ❤️</p>
-      <div class="game-board" id="gameBoard"></div>
-      <div class="score" id="score">Caught: 0/5</div>
-      <div class="button-group">
-        <button class="btn btn-sm" onclick="prevSlide()">← Back</button>
-        <button class="btn btn-sm" onclick="startHeartGame()">Play Again</button>
-        <button class="btn btn-sm" onclick="nextSlide()">Next →</button>
-      </div>
-    </div>
-
-    <!-- Slide 5: Final Message -->
-    <div class="slide">
-      <h1>Will You Forgive Me? 🥺</h1>
-      <div class="emoji">💕</div>
-      <p>You mean the world to me, and I promise to do better. I value our friendship/relationship more than anything.</p>
-      <div class="button-group">
-        <button class="btn" onclick="prevSlide()" style="background: #888;">← Back</button>
-        <button class="btn" onclick="acceptApology()">Yes, I Forgive You! 💚</button>
-      </div>
-    </div>
-
-    <!-- Slide 6: Victory -->
-    <div class="slide">
-      <h1>Thank You! 🎉</h1>
-      <div class="emoji">🎊</div>
-      <p>You've made me the happiest person in the world!</p>
-      <p style="font-size: 1.2rem; margin: 20px 0; font-weight: bold;">Let's start fresh and create better memories together! 💙</p>
-      <button class="btn" onclick="location.reload()">Start Over</button>
-    </div>
+    <div class="progress-dots" id="progressDots"></div>
   </div>
 
   <script>
     let currentSlide = 0;
     const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
     let heartsCaught = 0;
+
+    function initDots() {
+      const dotsContainer = document.getElementById('progressDots');
+      dotsContainer.innerHTML = '';
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.onclick = () => goToSlide(i);
+        dotsContainer.appendChild(dot);
+      }
+    }
 
     function showSlide(n) {
       slides.forEach(slide => slide.classList.remove('active'));
       slides[n].classList.add('active');
+      document.querySelectorAll('.dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === n);
+      });
+      if (n === 2) startHeartGame();
     }
 
     function nextSlide() {
-      if (currentSlide < slides.length - 1) {
-        currentSlide++;
-        if (currentSlide === 4) {
-          startHeartGame();
-        }
-        showSlide(currentSlide);
-      }
-    }
-
-    function prevSlide() {
-      if (currentSlide > 0) {
-        currentSlide--;
-        showSlide(currentSlide);
-      }
-    }
-
-    function moveButton() {
-      const noBtn = document.getElementById('no-btn');
-      const randomX = Math.random() * 200 - 100;
-      const randomY = Math.random() * 150 - 75;
-      noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
-    }
-
-    function startHeartGame() {
-      const gameBoard = document.getElementById('gameBoard');
-      gameBoard.innerHTML = '';
-      heartsCaught = 0;
-      document.getElementById('score').textContent = 'Caught: 0/5';
-
-      for (let i = 0; i < 8; i++) {
-        const heart = document.createElement('div');
-        heart.className = 'heart';
-        heart.textContent = '❤️';
-        heart.style.left = Math.random() * 90 + '%';
-        heart.style.top = Math.random() * 90 + '%';
-        heart.onclick = (e) => {
-          e.stopPropagation();
-          heart.remove();
-          heartsCaught++;
-          document.getElementById('score').textContent = `Caught: ${heartsCaught}/5`;
-          if (heartsCaught >= 5) {
-            setTimeout(() => {
-              alert('Amazing! You caught them all! 🎉');
-            }, 300);
-          }
-        };
-        gameBoard.appendChild(heart);
-      }
-    }
-
-    function acceptApology() {
-      currentSlide = 5;
+      currentSlide = (currentSlide + 1) % totalSlides;
       showSlide(currentSlide);
     }
 
-    showSlide(0);
+    function goToSlide(n) {
+      currentSlide = n;
+      showSlide(currentSlide);
+    }
+
+    function dodgeButton() {
+      const noBtn = document.getElementById('no-btn');
+      const randomX = Math.random() * window.innerWidth * 0.8;
+      const randomY = Math.random() * window.innerHeight * 0.8;
+      noBtn.style.left = randomX + 'px';
+      noBtn.style.top = randomY + 'px';
+    }
+
+    function resetGame() {
+      const noBtn = document.getElementById('no-btn');
+      noBtn.style.left = '';
+      noBtn.style.top = '';
+    }
+
+    function startHeartGame() {
+      heartsCaught = 0;
+      const gameBoard = document.getElementById('gameBoard');
+      gameBoard.innerHTML = '<div class="basket">🧺</div>';
+      for (let i = 0; i < 8; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.className = 'heart';
+          heart.innerHTML = '❤️';
+          heart.style.left = Math.random() * 90 + '%';
+          heart.style.top = Math.random() * 80 + '%';
+          heart.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+          heart.onclick = (e) => {
+            e.stopPropagation();
+            catchHeart(heart);
+          };
+          gameBoard.appendChild(heart);
+          setTimeout(() => {
+            if (heart.parentNode) heart.remove();
+          }, 3000);
+        }, i * 400);
+      }
+    }
+
+    function catchHeart(heart) {
+      heart.remove();
+      heartsCaught++;
+      document.getElementById('heartCount').textContent = `Hearts Caught: ${heartsCaught}/5`;
+      if (heartsCaught >= 5) {
+        document.getElementById('gameBoard').innerHTML = '<div style="text-align: center; padding: 150px 20px; font-size: 2rem;">🎉 You Won! 🎉</div>';
+      }
+    }
+
+    function resetHeartGame() {
+      heartsCaught = 0;
+    }
+
+    function celebrate() {
+      const emojis = ['🎉', '💖', '🎊', '✨', '🌟'];
+      for (let i = 0; i < 20; i++) {
+        const span = document.createElement('span');
+        span.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+        span.style.position = 'fixed';
+        span.style.left = Math.random() * 100 + '%';
+        span.style.top = '-20px';
+        span.style.fontSize = Math.random() * 2 + 1 + 'rem';
+        span.style.animation = 'fall 3s linear forwards';
+        document.body.appendChild(span);
+        setTimeout(() => span.remove(), 3000);
+      }
+      alert('🎉 Thank you, Maitri! You made my day! I promise to be the best friend ever! 💚');
+    }
+
+    const style = document.createElement('style');
+    style.textContent = '@keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }';
+    document.head.appendChild(style);
+
+    initDots();
   </script>
 </body>
 </html>
